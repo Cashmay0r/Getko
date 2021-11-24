@@ -1,18 +1,23 @@
-export default function ({
-  store,
+export default async function ({
   route,
-  redirect
+  redirect,
+  store,
+  app
 }) {
-  const user = store.state.users.user;
-  console.log('User in state', user)
-  const blockedRoute = /\/private\/*/g;
-  const homeRoute = '/';
 
-  if (!user & route.path.match(blockedRoute)) {
-    redirect('/login')
-  }
 
-  if (user && route.path === homeRoute) {
-    redirect('/private')
+  if (route.path !== '/') {
+    //we are on a protected route
+    if (!store.state.auth.user) {
+      console.log(store.user)
+      //take them to sign in page
+      return redirect('/')
+    }
+  } else if (route.path === '/') {
+    if (!store.state.auth.user) {
+      //leave them on the sign in page
+    } else {
+      return redirect('/private/account')
+    }
   }
 }

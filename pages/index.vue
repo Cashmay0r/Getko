@@ -18,6 +18,11 @@ export default {
       loginForm: true,
     }
   },
+  /* computed: {
+    firebaseAuth() {
+      return this.$fire.auth
+    },
+  }, */
   methods: {
     changeToRegister() {
       this.loginForm = false

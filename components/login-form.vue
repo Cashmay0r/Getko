@@ -5,9 +5,9 @@
       <form class="my-4" @submit.prevent="submitLogin">
         <div>
           <p class="text-xs mb-1">Email</p>
-          <input placeholder="Email..." class="w-72 mb-5 rounded-md border border-gray-500 border-opacity-75 px-3 py-1" required v-model="loginDetails.email" type="email" />
+          <input placeholder="Email..." class="w-72 mb-5 rounded-md border border-gray-500 border-opacity-75 px-3 py-1" required v-model="account.email" type="email" />
           <p class="text-xs mb-1">Password</p>
-          <input placeholder="Password..." class="w-72 mb-5 rounded-md border border-gray-500 border-opacity-75 px-3 py-1" required v-model="loginDetails.password" type="password" />
+          <input placeholder="Password..." class="w-72 mb-5 rounded-md border border-gray-500 border-opacity-75 px-3 py-1" required v-model="account.password" type="password" />
         </div>
         <div class="flex flex-row justify-evenly w-full h-full items-center mb-4">
           <div class="text-sm"><input type="checkbox" class="mr-2" />Remember me</div>
@@ -18,9 +18,6 @@
         </div>
       </form>
       <p class="text-sm">Not registered yet? <a class="hover:no-underline underline text-primary-green cursor-pointer" @click="emitRegistration">Create an Account</a></p>
-      <div v-show="isError">
-        <p>{{ errMsg }}</p>
-      </div>
     </div>
   </div>
 </template>
@@ -29,30 +26,42 @@
 export default {
   data() {
     return {
-      loginDetails: {
-        email: '',
-        password: '',
+      account: {
+        email: 'test@test.com',
+        password: 'password123',
       },
-      isError: false,
-      errMsg: '',
     }
+  },
+  computed: {
+    /* firebaseAuth() {
+      return this.$fire.auth
+    }, */
   },
   methods: {
     emitRegistration() {
       this.$emit('registerForm')
     },
-    submitLogin() {
+    async submitLogin() {
       // TODO: validate/sanitize the inputs
-      this.$store.dispatch('users/login', this.loginDetails).catch((error) => {
-        this.isError = true
-        this.errMsg = error.code
+      this.$store.dispatch('auth/login', this.account)
+      /* this.$fire.auth
+        .signInWithEmailAndPassword(this.account.email, this.account.password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user
+          console.log('Successfully Logged in')
 
-        setTimeout(() => {
-          this.isError = false
-        }, 5000)
-      })
-
-      this.$router.push('/private')
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code
+          const errorMessage = error.message
+          console.log('Unsuccessfully Logged in')
+          console.log(errorMessage)
+        })
+      await this.$auth.loginWith('local', {
+        data: this.account,
+      }) */
     },
   },
 }

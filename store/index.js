@@ -1,14 +1,14 @@
-import jwtDecode from "jwt-decode"
-import cookieparser from 'cookieparser'
+import JWTDecode from "jwt-decode";
+import cookieparser from "cookieparser";
 
 export const actions = {
-  nuxtServerInit({
-      commit
-    }, {
-      req
-    },
+  async nuxtServerInit({
+    store,
+    commit
+  }, {
+    req
+  }) {
 
-  ) {
     if (process.server && process.static) return;
     if (!req.headers.cookie) return;
 
@@ -17,17 +17,13 @@ export const actions = {
 
     if (!accessTokenCookie) return;
 
-    const decoded = jwtDecode(accessTokenCookie);
+    const decoded = JWTDecode(accessTokenCookie);
 
     if (decoded) {
-      commit('users/set_user', {
-
+      commit("auth/SET_USER", {
         uid: decoded.user_id,
         email: decoded.email
-      })
-      console.log(decoded)
-      console.log('Cookie decoded')
+      });
     }
-
   }
-}
+};
