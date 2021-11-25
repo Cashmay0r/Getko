@@ -46,7 +46,6 @@ export default {
   ],
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-
     ['@nuxtjs/firebase',
       {
         config: {
@@ -61,9 +60,9 @@ export default {
         services: {
           auth: true
         }
-      }
-    ]
-
+      },
+    ],
+    '@nuxtjs/axios',
 
   ],
   auth: {
@@ -76,8 +75,14 @@ export default {
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
-
+  serverMiddleware: {
+    '/api': '~/api'
+  },
   router: {
     middleware: ['auth']
+  },
+  axios: {
+    baseURL: 'http://example.com',
+    browserBaseURL: 'http://localhost:3000'
   }
 }

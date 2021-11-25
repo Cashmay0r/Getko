@@ -14,6 +14,7 @@
           <button>Logout</button>
         </div>
         <div v-else>
+          <button @click="testAPI">Test API</button>
           <NuxtLink to="/"><a class="mx-2 hover:text-hover-green cursor-pointer">Login</a></NuxtLink>
           <NuxtLink to=""><a class="mx-2 hover:text-hover-green cursor-pointer">Register</a></NuxtLink>
           <a class="mx-2 hover:text-hover-green cursor-pointer" @click="logout">Logout</a>
@@ -39,6 +40,10 @@ export default {
       } else {
         console.log('No user is currenltly signed in')
       }
+    },
+    async testAPI() {
+      const response = await this.$axios.get('/api/test')
+      console.log(response.data)
     },
   },
 }
