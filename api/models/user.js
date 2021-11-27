@@ -1,6 +1,10 @@
-import mongoose from 'mongoose'
+import {
+  model,
+  Schema,
+  models
+} from 'mongoose'
 
-const userSchema = new mongoose.Schema({
+let userSchema = new Schema({
   first_name: {
     type: String,
     default: null
@@ -21,4 +25,4 @@ const userSchema = new mongoose.Schema({
   }
 })
 
-export default mongoose.model('user', userSchema)
+export default models['user'] || model('user', userSchema)

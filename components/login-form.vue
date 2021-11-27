@@ -27,8 +27,8 @@ export default {
   data() {
     return {
       account: {
-        email: 'test@test.com',
-        password: 'password123',
+        email: 'aidanenes@gmail.com',
+        password: 'meltingpotmate',
       },
     }
   },
@@ -44,24 +44,6 @@ export default {
     async submitLogin() {
       // TODO: validate/sanitize the inputs
       this.$store.dispatch('auth/login', this.account)
-      /* this.$fire.auth
-        .signInWithEmailAndPassword(this.account.email, this.account.password)
-        .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user
-          console.log('Successfully Logged in')
-
-          // ...
-        })
-        .catch((error) => {
-          const errorCode = error.code
-          const errorMessage = error.message
-          console.log('Unsuccessfully Logged in')
-          console.log(errorMessage)
-        })
-      await this.$auth.loginWith('local', {
-        data: this.account,
-      }) */
     },
   },
 }

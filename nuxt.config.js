@@ -46,37 +46,13 @@ export default {
   ],
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-    ['@nuxtjs/firebase',
-      {
-        config: {
-          apiKey: "AIzaSyD1cEZC39UUWwByVLeinL8ZMnee-TPbQ4o",
-          authDomain: "getko-b4be9.firebaseapp.com",
-          projectId: "getko-b4be9",
-          storageBucket: "getko-b4be9.appspot.com",
-          messagingSenderId: "578777348041",
-          appId: "1:578777348041:web:7cc58ca86b2309219b1a18",
-          measurementId: "G-R9DHYQMM2G"
-        },
-        services: {
-          auth: true
-        }
-      },
-    ],
     '@nuxtjs/axios',
-
   ],
-  auth: {
-
-    persistence: 'local', // default
-    initialize: {
-      subscribeManually: false
-    },
-    ssr: false, // default 
-  },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
+
   serverMiddleware: {
-    '/api': '~/api'
+    '/api': '~/api/index.js'
   },
   router: {
     middleware: ['auth']

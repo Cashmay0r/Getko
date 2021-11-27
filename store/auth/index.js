@@ -1,91 +1,50 @@
-import Cookie from 'js-cookie'
+import Cookie from "js-cookie";
 
 const actions = {
-  async login({
-    app,
-    commit,
-    state
-  }, account) {
-
+  async login({ app, commit, state }, account) {
     try {
-      const auth = this.$fire.auth
+      const cookie = await this.$axios.post("/api/login", account);
+      console.log(cookie.data);
 
-      const login = await auth.signInWithEmailAndPassword(account.email, account.password)
-      console.log(login.user)
-
-
-      if (login) {
-        const token = await auth.currentUser.getIdToken(auth.currentUser, true)
-
-        console.log('Token => ', token)
-        console.log(auth.currentUser)
-        const {
-          email,
-          uid
-        } = auth.currentUser
-        console.log('Email + UID => ', email, uid)
-
-        Cookie.set('access_token', token)
-
-        commit('SET_USER', {
-          email,
-          uid
-        })
-
-
-        this.$router.push({
-          path: '/private'
-        })
-      } else {
-        console.log('user could not login')
-      }
+      commit("SET_USER", {
+        email: cookie.data.email,
+        uid: cookie.data.uid,
+      });
+      this.$router.push({
+        path: "/private/account",
+      });
     } catch {
-      console.log('Try-catch did not work?')
+      console.log("Unable to log in");
     }
-
-
   },
-  async logout({
-    commit
-
-  }) {
-
-    const auth = this.$fire.auth
-
+  async logout({ commit }) {
     try {
+      // Need to make sure I have a header here at some point
+      const clearCookie = await this.$axios.get("/api/logout");
+      console.log(clearCookie.data);
+      commit("SET_USER", null);
 
-      const logout = await auth.signOut()
-      console.log(auth.currentUser)
-      if (!auth.currentUser) {
-        Cookie.remove('access_token')
-
-        commit('SET_USER', null)
-
-        this.$router.push({
-          path: '/'
-        })
-      } else {
-
-      }
-
+      this.$router.push({
+        path: "/",
+      });
     } catch {
-
+      console.log("Something went wrong");
     }
-  }
-}
+  },
+};
 
 const mutations = {
   SET_USER(state, user) {
-    state.user = user
+    state.user = user;
   },
-}
+};
 
 const state = () => ({
   user: null,
-})
+});
 
 export default {
   state,
   actions,
   mutations,
-}
+};
