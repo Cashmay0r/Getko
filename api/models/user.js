@@ -1,28 +1,28 @@
-import {
-  model,
-  Schema,
-  models
-} from 'mongoose'
+import { model, Schema, models } from "mongoose";
 
 let userSchema = new Schema({
   first_name: {
     type: String,
-    default: null
+    default: null,
+    required: true,
   },
   last_name: {
     type: String,
-    default: null
+    default: null,
+    required: true,
   },
   email: {
     type: String,
-    unique: true
+    unique: true,
+    required: true,
   },
   password: {
-    type: String
+    type: String,
+    required: true,
   },
   token: {
-    type: String
-  }
-})
+    type: String,
+  },
+});
 
-export default models['user'] || model('user', userSchema)
+export default models["user"] || model("user", userSchema);

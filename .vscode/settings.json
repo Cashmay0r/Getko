@@ -1,10 +1,11 @@
 {
-  "html.format.wrapLineLength": 300,
+  "html.format.wrapLineLength": 0,
   "html.format.wrapAttributes": "preserve-aligned",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "diffEditor.wordWrap": "off",
   "debug.console.wordWrap": false,
   "vetur.format.enable": false,
   "editor.formatOnSave": true,
-  "editor.wordWrapColumn": 300
+  "editor.wordWrapColumn": 300,
+  "vetur.format.defaultFormatter.html": "js-beautify-html"
 }

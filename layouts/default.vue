@@ -57,13 +57,29 @@
 
 <script>
 export default {
+  computed: {
+    accessToken() {
+      console.log(this.$store.state.auth);
+      if (this.$store.state.auth.user != null) {
+        return this.$store.state.auth.user.access_token;
+      } else {
+        return null;
+      }
+    },
+  },
   methods: {
     logout() {
       this.$store.dispatch("auth/logout");
     },
     async testAPI() {
-      const response = await this.$axios.get("/api/test");
-      console.log(response.data);
+      if (this.accessToken != null) {
+        const config = {
+          headers: { Authorization: `Bearer ${this.accessToken}` },
+        };
+        const response = await this.$axios.get("/api/testroute", config);
+      } else {
+        alert("Must be logged in to access this feature");
+      }
     },
   },
 };

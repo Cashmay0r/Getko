@@ -1,14 +1,17 @@
 import Cookie from "js-cookie";
 
 const actions = {
-  async login({ app, commit, state }, account) {
+  async login({ commit }, account) {
     try {
+      // Returns a cookie with JWT and data containing email and uid
       const cookie = await this.$axios.post("/api/login", account);
       console.log(cookie.data);
 
       commit("SET_USER", {
         email: cookie.data.email,
         uid: cookie.data.uid,
+        access_token: cookie.data.access_token,
+        refresh_token: cookie.data.refresh_token,
       });
       this.$router.push({
         path: "/private/account",
@@ -21,7 +24,6 @@ const actions = {
     try {
       // Need to make sure I have a header here at some point
       const clearCookie = await this.$axios.get("/api/logout");
-      console.log(clearCookie.data);
       commit("SET_USER", null);
 
       this.$router.push({
@@ -29,6 +31,23 @@ const actions = {
       });
     } catch {
       console.log("Something went wrong");
+    }
+  },
+  async register({ commit }, account) {
+    try {
+      // Returns a cookie with JWT and data containing email and uid
+      const registerUser = await this.$axios.post("/api/register", account);
+      commit("SET_USER", {
+        email: registerUser.data.email,
+        uid: registerUser.data.uid,
+        access_token: registerUser.data.access_token,
+        refresh_token: registerUser.data.refresh_token,
+      });
+      this.$router.push({
+        path: "/private/account",
+      });
+    } catch {
+      console.log("Unable to create account");
     }
   },
 };
