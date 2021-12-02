@@ -5,8 +5,9 @@ const actions = {
     try {
       // Returns a cookie with JWT and data containing email and uid
       const cookie = await this.$axios.post("/api/login", account);
-      console.log(cookie.data);
-
+      if (cookie.status == 200) {
+        console.log("User successfully logged in");
+      }
       commit("SET_USER", {
         email: cookie.data.email,
         uid: cookie.data.uid,
@@ -54,6 +55,7 @@ const actions = {
 
 const mutations = {
   SET_USER(state, user) {
+    console.log(user);
     state.user = user;
   },
 };

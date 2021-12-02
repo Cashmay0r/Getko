@@ -3,6 +3,7 @@ import express from "express";
 import { connect } from "./db.js";
 import user from "./models/user";
 import jwt from "jsonwebtoken";
+import jwtDecode from "jwt-decode";
 import bcrypt from "bcryptjs";
 import { authenticateJWT } from "./middleware/authentication";
 
@@ -19,6 +20,48 @@ app.use(
   })
 );
 
+app.post("/refresh-token", async (req, res) => {
+  // Verify token
+  const { refresh_token } = req.body;
+
+  jwt.verify(refresh_token, process.env.REFRESH_TOKEN_KEY, (err, user) => {
+    if (err) {
+      return res.sendStatus(403);
+    } else {
+      const jwtDecoded = jwtDecode(refresh_token);
+      const token = jwt.sign(
+        {
+          user_id: jwtDecoded.user_id,
+          email: jwtDecode.email,
+        },
+        process.env.TOKEN_KEY,
+        {
+          expiresIn: "15m",
+        }
+      );
+      const refreshToken = jwt.sign(
+        {
+          user_id: jwtDecoded.user_id,
+          email: jwtDecode.email,
+        },
+        process.env.REFRESH_TOKEN_KEY,
+        {
+          expiresIn: "24h",
+        }
+      );
+
+      const data = {
+        uid: jwtDecoded.user_id,
+        email: jwtDecoded.email,
+        access_token: token,
+        refresh_token: refreshToken,
+      };
+
+      res.send(data);
+    }
+  });
+});
+
 // Call function to verify JWT token in request header is valid
 app.post("/login", async (req, res) => {
   /* try { */
@@ -31,7 +74,6 @@ app.post("/login", async (req, res) => {
   const checkPassword = await bcrypt.compare(password, findUser.password);
   if (checkPassword) {
     // Password is true
-    const result = "Password does match!";
     const token = jwt.sign(
       {
         user_id: findUser._id,
@@ -71,7 +113,8 @@ app.post("/login", async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production" ? true : false,
     });
-    res.send(data);
+
+    res.status(200).send(data);
   } else {
     // Password is false
     const result = "Password does not match";
