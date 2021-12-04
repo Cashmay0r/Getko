@@ -133,11 +133,7 @@ export default {
       passwordVal2: "",
     };
   },
-  /* computed: {
-    firebaseAuth() {
-      return this.$fire.auth
-    },
-  }, */
+
   methods: {
     emitLoginForm() {
       this.$emit("loginForm");

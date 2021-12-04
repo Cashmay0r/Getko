@@ -19,8 +19,44 @@ app.use(
     extended: false,
   })
 );
+app.get("/user", async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader.split(" ")[1];
+
+  jwt.verify(token, process.env.TOKEN_KEY, (err, user) => {
+    if (err) {
+      return res.sendStatus(403);
+    }
+  });
+  const tokenDetails = jwtDecode(token);
+  try {
+    const email = tokenDetails.email;
+    const findUser = await user.findOne({
+      email,
+    });
+
+    const userDetails = {
+      id: findUser._id,
+      first_name: findUser.first_name,
+      last_name: findUser.last_name,
+      email: findUser.email,
+    };
+    res.send(userDetails);
+  } catch {
+    console.log("Could not find user");
+  }
+
+  // Verify token
+
+  // Get user id from token
+
+  // Fetch user details
+
+  // Respond with a JSON of user details
+});
 
 app.post("/refresh-token", async (req, res) => {
+  console.log("Refreshing Token");
   // Verify token
   const { refresh_token } = req.body;
 
@@ -49,14 +85,13 @@ app.post("/refresh-token", async (req, res) => {
           expiresIn: "24h",
         }
       );
-
+      console.log(jwtDecoded);
       const data = {
         uid: jwtDecoded.user_id,
         email: jwtDecoded.email,
         access_token: token,
         refresh_token: refreshToken,
       };
-
       res.send(data);
     }
   });
@@ -64,6 +99,8 @@ app.post("/refresh-token", async (req, res) => {
 
 // Call function to verify JWT token in request header is valid
 app.post("/login", async (req, res) => {
+  console.log("Logging user in");
+  console.log(req.body);
   /* try { */
   const { email, password } = req.body;
 
@@ -77,7 +114,7 @@ app.post("/login", async (req, res) => {
     const token = jwt.sign(
       {
         user_id: findUser._id,
-        email,
+        email: email,
       },
       process.env.TOKEN_KEY,
       {
@@ -87,7 +124,7 @@ app.post("/login", async (req, res) => {
     const refreshToken = jwt.sign(
       {
         user_id: findUser._id,
-        email,
+        email: email,
       },
       process.env.REFRESH_TOKEN_KEY,
       {
@@ -101,9 +138,9 @@ app.post("/login", async (req, res) => {
       refresh_token: refreshToken,
     };
     findUser.token = token;
-    const oneDayInMilli = 24 * 60 * 60 * 1000;
-    const fifteenMinsInMilli = 15 * 60 * 1000;
-    res.cookie("access_token", token, {
+    /* const oneDayInMilli = 24 * 60 * 60 * 1000;
+    const fifteenMinsInMilli = 15 * 60 * 1000; */
+    /* res.cookie("access_token", token, {
       maxAge: fifteenMinsInMilli,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production" ? true : false,
@@ -112,9 +149,9 @@ app.post("/login", async (req, res) => {
       maxAge: oneDayInMilli,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production" ? true : false,
-    });
+    }); */
 
-    res.status(200).send(data);
+    res.send({ token: token });
   } else {
     // Password is false
     const result = "Password does not match";
@@ -126,6 +163,7 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/register", async (req, res) => {
+  console.log("Registering New user");
   try {
     const { first_name, last_name, email, password } = req.body;
 
@@ -153,7 +191,7 @@ app.post("/register", async (req, res) => {
     const token = jwt.sign(
       {
         user_id: newUser._id,
-        email,
+        email: email,
       },
       process.env.TOKEN_KEY,
       {
@@ -163,7 +201,7 @@ app.post("/register", async (req, res) => {
     const refreshToken = jwt.sign(
       {
         user_id: newUser._id,
-        email,
+        email: email,
       },
       process.env.REFRESH_TOKEN_KEY,
       {
@@ -195,17 +233,24 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.get("/logout", (req, res) => {
-  res
-    .clearCookie("access_token")
-    .clearCookie("refresh_token")
-    .send("Cookies Cleared");
+app.post("/logout", (req, res) => {
+  console.log("Logging user out");
+  /* res.clearCookie("access_token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production" ? true : false,
+  });
+  res.clearCookie("refresh_token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production" ? true : false,
+  }); */
+  res.sendStatus(200);
 });
 
 // Checks if current JWT is valid
-app.use(authenticateJWT);
+//app.use(authenticateJWT);
 
 app.get("/testroute", (req, res) => {
+  console.log("Test route");
   res.sendStatus(200);
 });
 export default {

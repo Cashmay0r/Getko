@@ -96,22 +96,27 @@ export default {
     return {
       account: {
         email: "aidanenseleit98@gmail.com",
-        password: "meltingpotmate",
+        password: "Missydead12!",
       },
     };
   },
-  computed: {
-    /* firebaseAuth() {
-      return this.$fire.auth
-    }, */
-  },
+  computed: {},
   methods: {
     emitRegistration() {
       this.$emit("registerForm");
     },
     async submitLogin() {
       // TODO: validate/sanitize the inputs
-      this.$store.dispatch("auth/login", this.account);
+
+      try {
+        const login = await this.$auth.loginWith("local", {
+          data: this.account,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+
+      //this.$store.dispatch("auth/login", this.account);
     },
   },
 };

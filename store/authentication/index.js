@@ -21,10 +21,13 @@ const actions = {
       console.log("Unable to log in");
     }
   },
-  async logout({ commit }) {
+  async logout({ commit, app }) {
     try {
       // Need to make sure I have a header here at some point
+      // Clear cookies set from backend
       const clearCookie = await this.$axios.get("/api/logout");
+      // Clear cookies set on nuxt backend
+      this.$cookies.removeAll();
       commit("SET_USER", null);
 
       this.$router.push({
@@ -55,7 +58,6 @@ const actions = {
 
 const mutations = {
   SET_USER(state, user) {
-    console.log(user);
     state.user = user;
   },
 };

@@ -1,9 +1,10 @@
-import JWTDecode from "jwt-decode";
+/* import JWTDecode from "jwt-decode";
 import cookieparser, { parse } from "cookieparser";
 //dotenv.config();
 
 export const actions = {
   async nuxtServerInit({ store, commit, router, app }, { req }) {
+    console.log("Nuxt server init");
     if (process.server && process.static) return;
     if (!req.headers.cookie) return;
     const baseUrl = "http://localhost:3000";
@@ -12,18 +13,15 @@ export const actions = {
     const refreshToken = parsed.refresh_token;
 
     // If no access_token, send refresh token and get a new access_token + new refresh_token
-    if (!accessTokenCookie) {
-      console.log("No access token");
+    /* if (!accessTokenCookie) {
       // Send refresh token, verify token, receive a new cookie with the token
       if (!refreshToken) {
-        console.log("No refresh token");
         // No access or refresh token
         router.push({
           path: "/",
         });
         commit("auth/SET_USER", null);
       } else {
-        console.log("There is a refresh token");
         // Send refresh token
         const data = {
           refresh_token: refreshToken,
@@ -35,28 +33,30 @@ export const actions = {
           );
 
           //Set cookies
-          /*           const cookieCheck = this.$cookies.get("access_token");
+          const cookieCheck = this.$cookies.get("access_token");
+          console.log("Cookie Check", cookieCheck);
           if (!cookieCheck) {
             this.$cookies.removeAll();
+            console.log("Setting access cookie");
             this.$cookies.set("access_token", newToken.data.access_token, {
               httpOnly: true,
               maxAge: 15 * 60,
               secure: process.env.NODE_ENV === "production" ? true : false,
             });
-
+            console.log("Setting refresh cookie");
             this.$cookies.set("refresh_token", newToken.data.refresh_token, {
               httpOnly: true,
               maxAge: 24 * 60 * 60,
               secure: process.env.NODE_ENV === "production" ? true : false,
             });
           }
-
+          console.log(newToken.data);
           commit("auth/SET_USER", {
             uid: newToken.data.uid,
             email: newToken.data.email,
             access_token: newToken.data.access_token,
             refresh_token: newToken.data.refresh_token,
-          }); */
+          });
         } catch {
           console.error("Unable to generate a new token");
         }
@@ -64,7 +64,6 @@ export const actions = {
       // Check for cookie again
     } else {
       // Verify
-      console.log("Access token is available");
       const decoded = JWTDecode(accessTokenCookie);
       if (decoded) {
         commit("auth/SET_USER", {
@@ -74,7 +73,7 @@ export const actions = {
           refresh_token: refreshToken,
         });
       }
-    }
+    } 
     // If no refresh_token, user cannot access content and has to login or register account
   },
-};
+};*/

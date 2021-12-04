@@ -68,8 +68,11 @@ export default {
     },
   },
   methods: {
-    logout() {
-      this.$store.dispatch("auth/logout");
+    async logout() {
+      //this.$store.dispatch("auth/logout");
+      console.log("Logging out...");
+      this.$auth.logout();
+      //console.log(logout);
     },
     async testAPI() {
       if (this.accessToken != null) {

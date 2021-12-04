@@ -48,7 +48,35 @@ export default {
     "@nuxtjs/tailwindcss",
   ],
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: ["@nuxtjs/axios", "cookie-universal-nuxt"],
+  modules: ["@nuxtjs/axios", "cookie-universal-nuxt", "@nuxtjs/auth-next"],
+  auth: {
+    redirect: {
+      login: "/",
+      logout: "/",
+      callback: "/private",
+      home: "/private",
+    },
+    strategies: {
+      local: {
+        token: {
+          property: "token",
+          global: true,
+          required: true,
+          type: "Bearer",
+          maxAge: 15 * 60,
+        },
+        user: {
+          property: false,
+          autoFetch: true,
+        },
+        endpoints: {
+          login: { url: "/api/login", method: "post" },
+          logout: { url: "/api/logout", method: "post" },
+          user: { url: "/api/user", method: "get" },
+        },
+      },
+    },
+  },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
 
@@ -56,7 +84,7 @@ export default {
     "/api": "~/api/index.js",
   },
   router: {
-    middleware: ["auth"],
+    middleware: ["authentication"],
   },
   axios: {
     baseURL: "http://example.com",
