@@ -1,79 +1,47 @@
-/* import JWTDecode from "jwt-decode";
-import cookieparser, { parse } from "cookieparser";
-//dotenv.config();
-
 export const actions = {
-  async nuxtServerInit({ store, commit, router, app }, { req }) {
-    console.log("Nuxt server init");
+  async nuxtServerInit({store, commit, router, app}, {req}) {
     if (process.server && process.static) return;
     if (!req.headers.cookie) return;
-    const baseUrl = "http://localhost:3000";
-    const parsed = cookieparser.parse(req.headers.cookie);
-    const accessTokenCookie = parsed.access_token;
-    const refreshToken = parsed.refresh_token;
+    const baseUrl = 'http://localhost:3000';
+    // Verify cookie with backend and get user data
 
-    // If no access_token, send refresh token and get a new access_token + new refresh_token
-    /* if (!accessTokenCookie) {
-      // Send refresh token, verify token, receive a new cookie with the token
-      if (!refreshToken) {
-        // No access or refresh token
-        router.push({
-          path: "/",
+    if (this.$auth.strategy.token.status().valid()) {
+      //const access_token = this.$auth.strategy.token.get();
+      //console.log("Access token2 ", access_token);
+      const access_token = this.$cookies.get('auth._token.local');
+
+      try {
+        const user = await this.$axios.post(baseUrl + '/api/user', {
+          headers: {Authorization: `${access_token}`},
         });
-        commit("auth/SET_USER", null);
-      } else {
-        // Send refresh token
-        const data = {
-          refresh_token: refreshToken,
-        };
-        try {
-          const newToken = await this.$axios.post(
-            `${baseUrl}/api/refresh-token`,
-            data
-          );
 
-          //Set cookies
-          const cookieCheck = this.$cookies.get("access_token");
-          console.log("Cookie Check", cookieCheck);
-          if (!cookieCheck) {
-            this.$cookies.removeAll();
-            console.log("Setting access cookie");
-            this.$cookies.set("access_token", newToken.data.access_token, {
-              httpOnly: true,
-              maxAge: 15 * 60,
-              secure: process.env.NODE_ENV === "production" ? true : false,
-            });
-            console.log("Setting refresh cookie");
-            this.$cookies.set("refresh_token", newToken.data.refresh_token, {
-              httpOnly: true,
-              maxAge: 24 * 60 * 60,
-              secure: process.env.NODE_ENV === "production" ? true : false,
-            });
-          }
-          console.log(newToken.data);
-          commit("auth/SET_USER", {
-            uid: newToken.data.uid,
-            email: newToken.data.email,
-            access_token: newToken.data.access_token,
-            refresh_token: newToken.data.refresh_token,
+        // Set user state with user data
+        this.$auth.setUser(user.data);
+      } catch {
+        console.error('Unable to fetch user data');
+      }
+    } else {
+      console.log('Access Token is invalid, needs to be refreshed');
+      const refresh_token = this.$cookies.get('refresh_token');
+
+      if (refresh_token) {
+        const token = await this.$axios.post(baseUrl + '/api/refresh-token', {
+          headers: {Authorization: `Bearer ${refresh_token}`},
+        });
+        const access_token = token.data.access_token;
+        if (access_token) {
+          console.log('Here');
+          const user = await this.$axios.post(baseUrl + '/api/user', {
+            headers: {Authorization: `Bearer ${access_token}`},
           });
-        } catch {
-          console.error("Unable to generate a new token");
+          // Set user state with user data
+          this.$auth.setUser(user.data);
+          this.$auth.strategy.token.set(access_token);
+          console.log('Access token has been refreshed');
+
+          //console.error("Unable to fetch user data");
         }
       }
-      // Check for cookie again
-    } else {
-      // Verify
-      const decoded = JWTDecode(accessTokenCookie);
-      if (decoded) {
-        commit("auth/SET_USER", {
-          uid: decoded.user_id,
-          email: decoded.email,
-          access_token: accessTokenCookie,
-          refresh_token: refreshToken,
-        });
-      }
-    } 
-    // If no refresh_token, user cannot access content and has to login or register account
+    }
   },
-};*/
+};

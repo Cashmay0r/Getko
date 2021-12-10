@@ -148,7 +148,7 @@ export default {
       }
     },
     createUser() {
-      this.$store.dispatch("auth/register", this.account);
+      this.$store.dispatch("authentication/register", this.account);
     },
   },
 };

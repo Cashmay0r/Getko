@@ -108,15 +108,21 @@ export default {
     async submitLogin() {
       // TODO: validate/sanitize the inputs
 
-      try {
+      /* try {
         const login = await this.$auth.loginWith("local", {
           data: this.account,
         });
       } catch (error) {
         console.log(error);
-      }
+      } */
+      /* let response = await this.$auth.loginWith("local", {
+        data: this.account,
+      }); */
 
-      //this.$store.dispatch("auth/login", this.account);
+      const login = await this.$store.dispatch(
+        "authentication/login",
+        this.account
+      );
     },
   },
 };

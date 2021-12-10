@@ -1,17 +1,11 @@
-export default async function ({ route, redirect, store, app }) {
-  console.log("In custom middleware");
-  if (route.path !== "/") {
+export default async function ({route, redirect, store, $auth}) {
+  let user = $auth.loggedIn;
+
+  if (route.path !== '/') {
     //we are on a protected route
-    if (!app.$auth.loggedIn) {
-      console.log(app.$auth.loggedIn);
+    if (!user) {
       //take them to sign in page
-      return redirect("/");
-    }
-  } else if (route.path === "/") {
-    if (!app.$auth.loggedIn) {
-      //leave them on the sign in page
-    } else {
-      return redirect("/private/account");
+      return redirect('/');
     }
   }
 }

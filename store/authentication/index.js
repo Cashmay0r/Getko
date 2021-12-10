@@ -1,73 +1,26 @@
-import Cookie from "js-cookie";
-
-const actions = {
-  async login({ commit }, account) {
+export const actions = {
+  async login({commit}, account) {
     try {
       // Returns a cookie with JWT and data containing email and uid
-      const cookie = await this.$axios.post("/api/login", account);
-      if (cookie.status == 200) {
-        console.log("User successfully logged in");
-      }
-      commit("SET_USER", {
-        email: cookie.data.email,
-        uid: cookie.data.uid,
-        access_token: cookie.data.access_token,
-        refresh_token: cookie.data.refresh_token,
-      });
-      this.$router.push({
-        path: "/private/account",
-      });
+      const tokens = await this.$axios.post('/api/login', account);
+      console.log(tokens);
+      const access_token = tokens.data.access_token;
+      // Login with newly created account
+      await this.$auth.loginWith('local', {data: account});
+      await this.$auth.strategy.token.set(access_token);
+      //await this.$auth.setUserToken(access_token);
     } catch {
-      console.log("Unable to log in");
+      console.log('Unable to Log user in');
     }
   },
-  async logout({ commit, app }) {
-    try {
-      // Need to make sure I have a header here at some point
-      // Clear cookies set from backend
-      const clearCookie = await this.$axios.get("/api/logout");
-      // Clear cookies set on nuxt backend
-      this.$cookies.removeAll();
-      commit("SET_USER", null);
-
-      this.$router.push({
-        path: "/",
-      });
-    } catch {
-      console.log("Something went wrong");
-    }
-  },
-  async register({ commit }, account) {
+  async register({commit}, account) {
     try {
       // Returns a cookie with JWT and data containing email and uid
-      const registerUser = await this.$axios.post("/api/register", account);
-      commit("SET_USER", {
-        email: registerUser.data.email,
-        uid: registerUser.data.uid,
-        access_token: registerUser.data.access_token,
-        refresh_token: registerUser.data.refresh_token,
-      });
-      this.$router.push({
-        path: "/private/account",
-      });
+      await this.$axios.post('/api/register', account);
+      // Login with newly created account
+      await this.$auth.loginWith('local', {data: account});
     } catch {
-      console.log("Unable to create account");
+      console.log('Unable to create account');
     }
   },
-};
-
-const mutations = {
-  SET_USER(state, user) {
-    state.user = user;
-  },
-};
-
-const state = () => ({
-  user: null,
-});
-
-export default {
-  state,
-  actions,
-  mutations,
 };
