@@ -1,17 +1,20 @@
 <template>
-  <div class="w-full h-20 flex flex-col lg:flex-row justify-around items-center flex-grow-0 static">
+  <div class="w-full h-20 flex flex-row lg:flex-row justify-evenly items-center static">
     <div class="mx-4 text-3xl text-primary-green">
-      <NuxtLink to="/" class="mx-2 hover:text-hover-green cursor-pointer">Getko</NuxtLink>
+      <nuxt-link to="/" class="mx-2 hover:text-hover-green cursor-pointer">Getko</nuxt-link>
     </div>
-    <div class="mx-4 text-lg text-primary-green">
-      <div v-if="this.$auth.loggedIn">
-        <NuxtLink to="/private/account" class="mx-2 hover:text-hover-green cursor-pointer">Account</NuxtLink>
+    <div class="mx-4 text-lg text-primary-green flex flex-row justify-center items-center">
+      <div>
+        <nuxt-link to="/store/home" class="mx-2 hover:text-hover-green cursor-pointer">Home</nuxt-link>
+      </div>
+      <div v-if="this.$auth.user" class="flex flex-row justify-center items-center">
+        <nuxt-link to="/private/account" class="mx-2 hover:text-hover-green cursor-pointer">Account</nuxt-link>
         <a class="mx-2 hover:text-hover-green cursor-pointer" @click="logout">Logout</a>
       </div>
-      <div v-else>
+      <div v-else class="flex flex-row justify-center items-center">
         <button @click="testAPI">Test API</button>
-        <NuxtLink to="/" class="mx-2 hover:text-hover-green cursor-pointer">Login</NuxtLink>
-        <NuxtLink to="/" class="mx-2 hover:text-hover-green cursor-pointer">Register</NuxtLink>
+        <nuxt-link to="/" class="mx-2 hover:text-hover-green cursor-pointer">Login</nuxt-link>
+        <nuxt-link to="/" class="mx-2 hover:text-hover-green cursor-pointer">Register</nuxt-link>
       </div>
     </div>
   </div>

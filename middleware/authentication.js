@@ -1,5 +1,5 @@
 export default async function ({route, redirect, store, $auth}) {
-  let user = $auth.loggedIn;
+  let user = $auth.user;
 
   if (route.path !== '/') {
     //we are on a protected route
