@@ -66,31 +66,7 @@ export default {
     '@nuxt/postcss8',
   ],
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: ['@nuxtjs/axios', 'cookie-universal-nuxt', '@nuxtjs/auth-next'],
-  auth: {
-    strategies: {
-      local: {
-        scheme: 'local',
-        token: {
-          property: 'access_token',
-          global: true,
-          required: true,
-          type: 'Bearer',
-          maxAge: 60 * 15,
-        },
-        user: {
-          property: false,
-          autoFetch: true,
-        },
-        endpoints: {
-          login: {url: '/api/login', method: 'post'},
-          refresh: {url: '/api/refresh-token', method: 'post'},
-          user: {url: '/api/user', method: 'post'},
-          logout: {url: '/api/logout', method: 'post'},
-        },
-      },
-    },
-  },
+  modules: ['@nuxtjs/axios', 'cookie-universal-nuxt'],
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     postcss: {

@@ -10,13 +10,14 @@
     "test": "jest"
   },
   "dependencies": {
-    "@nuxtjs/auth-next": "5.0.0-1624817847.21691f1",
     "@nuxtjs/axios": "^5.13.6",
     "bcrypt": "^5.0.1",
     "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
     "cookie-universal-nuxt": "^2.1.5",
     "cookieparser": "^0.1.0",
     "core-js": "^3.15.1",
+    "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "js-cookie": "^3.0.1",

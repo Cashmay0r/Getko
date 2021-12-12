@@ -1,26 +1,64 @@
 export const actions = {
-  async login({commit}, account) {
+  async login({state, commit}, account) {
     try {
       // Returns a cookie with JWT and data containing email and uid
-      const tokens = await this.$axios.post('/api/login', account);
-      console.log(tokens);
-      const access_token = tokens.data.access_token;
-      // Login with newly created account
-      await this.$auth.loginWith('local', {data: account});
-      await this.$auth.strategy.token.set(access_token);
-      //await this.$auth.setUserToken(access_token);
+      const login = await this.$axios.post('/api/login', account);
+      // Set cookies with tokens
+      if (login.status === 200) {
+        const access_token = login.data.access_token;
+        // Get user state
+        if (access_token) {
+          const user = await this.$axios.post('/api/user', {
+            headers: {Authorization: `${access_token}`},
+          });
+          commit('SET_USER', user.data);
+          this.$router.push('/store/home');
+        }
+      }
     } catch {
       console.log('Unable to Log user in');
     }
   },
-  async register({commit}, account) {
+  async register({state, commit}, account) {
     try {
       // Returns a cookie with JWT and data containing email and uid
-      await this.$axios.post('/api/register', account);
-      // Login with newly created account
-      await this.$auth.loginWith('local', {data: account});
+      const register = await this.$axios.post('/api/register', account);
+      const access_token = register.data.access_token;
+      // Get user state
+      const user = await this.$axios.post('/api/user', {
+        headers: {Authorization: `${access_token}`},
+      });
+
+      commit('SET_USER', user.data);
+      this.$router.push('/store/home');
     } catch {
       console.log('Unable to create account');
+    }
+  },
+  async logout({state, commit}) {
+    try {
+      console.log('Attempting to remove all cookies');
+      const logout = await this.$axios.post('/api/logout', {withCredentials: true});
+      if (logout) {
+        commit('SET_USER', null);
+        this.$router.push('/');
+      }
+    } catch {
+      console.log('Could not logout');
+    }
+  },
+};
+export const state = () => ({
+  user: null,
+  loggedIn: false,
+});
+export const mutations = {
+  SET_USER(state, user) {
+    if (user) {
+      state.user = user;
+      state.loggedIn = true;
+    } else {
+      state.loggedIn = false;
     }
   },
 };

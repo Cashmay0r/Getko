@@ -7,11 +7,11 @@
       <div>
         <nuxt-link to="/store/home" class="mx-2 hover:text-hover-green cursor-pointer">Home</nuxt-link>
       </div>
-      <div v-if="this.$auth.user" class="flex flex-row justify-center items-center">
+      <div class="flex flex-row justify-center items-center" v-if="loggedIn">
         <nuxt-link to="/private/account" class="mx-2 hover:text-hover-green cursor-pointer">Account</nuxt-link>
         <a class="mx-2 hover:text-hover-green cursor-pointer" @click="logout">Logout</a>
       </div>
-      <div v-else class="flex flex-row justify-center items-center">
+      <div class="flex flex-row justify-center items-center" v-else>
         <button @click="testAPI">Test API</button>
         <nuxt-link to="/" class="mx-2 hover:text-hover-green cursor-pointer">Login</nuxt-link>
         <nuxt-link to="/" class="mx-2 hover:text-hover-green cursor-pointer">Register</nuxt-link>
@@ -22,10 +22,14 @@
 
 <script>
   export default {
-    computed: {},
+    computed: {
+      loggedIn() {
+        return this.$store.state.authentication.loggedIn;
+      },
+    },
     methods: {
       async logout() {
-        await this.$auth.logout();
+        const logout = await this.$store.dispatch('authentication/logout');
         console.log('Logging out...');
 
         //console.log(logout);

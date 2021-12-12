@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import jwtDecode from 'jwt-decode';
 import bcrypt from 'bcryptjs';
 import {authenticateJWT} from './middleware/authentication';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ connect();
 
 const app = express();
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(
   express.urlencoded({
@@ -21,45 +23,44 @@ app.use(
 );
 app.post('/user', async (req, res) => {
   let authHeader = null;
-  try {
-    authHeader = req.body.headers.Authorization;
-  } catch {
-    authHeader = req.headers.authorization;
-  }
-  const token = authHeader.split(' ')[1];
+  const token = req.body.headers.Authorization;
+  if (token) {
+    //const token = authHeader.split(' ')[1];
 
-  jwt.verify(token, process.env.TOKEN_KEY, (err, user) => {
-    if (err) {
-      return res.sendStatus(403);
-    }
-  });
-  const tokenDetails = jwtDecode(token);
-  try {
-    const email = tokenDetails.email;
-    const findUser = await user.findOne({
-      email,
+    jwt.verify(token, process.env.TOKEN_KEY, (err, user) => {
+      if (err) {
+        return res.sendStatus(403);
+      }
     });
+    const tokenDetails = jwtDecode(token);
+    try {
+      const email = tokenDetails.email;
+      const findUser = await user.findOne({
+        email,
+      });
 
-    const userDetails = {
-      id: findUser._id,
-      first_name: findUser.first_name,
-      last_name: findUser.last_name,
-      email: findUser.email,
-    };
-    res.send(userDetails);
-  } catch {
-    console.log('Could not find user');
-    res.sendStatus(401);
+      const userDetails = {
+        id: findUser._id,
+        first_name: findUser.first_name,
+        last_name: findUser.last_name,
+        email: findUser.email,
+      };
+      res.send(userDetails);
+    } catch {
+      console.log('Could not find user');
+      res.sendStatus(401);
+    }
+  } else {
+    console.log('No access_token found');
+    res.sendStatus(400);
   }
 });
 
 app.post('/refresh-token', async (req, res) => {
   //console.log("Refreshing Token");
   // Verify token
-
-  const token = req.body.headers.Authorization;
-  const refresh_token = token.split(' ')[1];
-
+  const refresh_token = req.cookies.refresh_token;
+  //const refresh_token = token.split(' ')[1];
   jwt.verify(refresh_token, process.env.REFRESH_TOKEN_KEY, (err, user) => {
     if (err) {
       return res.sendStatus(403);
@@ -94,7 +95,6 @@ app.post('/login', async (req, res) => {
   console.log('Logging user in');
   /* try { */
   const {email, password} = req.body;
-  //console.log(email);
   const findUser = await user.findOne({
     email,
   });
@@ -127,21 +127,19 @@ app.post('/login', async (req, res) => {
     };
     findUser.token = token;
 
-    /* const oneDayInMilli = 24 * 60 * 60 * 1000;
-    const fifteenMinsInMilli = 15 * 60 * 1000;
-    res.cookie("access_token", token, {
-      maxAge: fifteenMinsInMilli,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production" ? true : false,
-    });
-    */
-
-    res.cookie('refresh_token', refreshToken, {
-      maxAge: 60 * 60 * 24 * 30,
+    const oneMonthInSecs = 60 * 60 * 24 * 30 * 1000;
+    const fifteenMinsInSecs = 15 * 60 * 1000;
+    res.cookie('access_token', token, {
+      maxAge: fifteenMinsInSecs,
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production' ? true : false,
     });
-    res.send({access_token: token});
+    res.cookie('refresh_token', refreshToken, {
+      maxAge: oneMonthInSecs,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production' ? true : false,
+    });
+    res.send(data);
   } else {
     // Password is false
     const result = 'Password does not match';
@@ -206,7 +204,20 @@ app.post('/register', async (req, res) => {
       refresh_token: refreshToken,
     };
 
-    res.send({token: token});
+    const oneMonthInSecs = 60 * 60 * 24 * 30 * 1000;
+    const fifteenMinsInSecs = 15 * 60 * 1000;
+    res.cookie('access_token', token, {
+      maxAge: fifteenMinsInSecs,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production' ? true : false,
+    });
+
+    res.cookie('refresh_token', refreshToken, {
+      maxAge: oneMonthInSecs,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production' ? true : false,
+    });
+    res.send(data);
   } catch (err) {
     console.log(err, 'Unable to register user');
   }
@@ -214,14 +225,23 @@ app.post('/register', async (req, res) => {
 
 app.post('/logout', (req, res) => {
   console.log('Logging user out');
-  /* res.clearCookie("access_token", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production" ? true : false,
-  });*/
-  res.clearCookie('refresh_token', {
+  const oneMonthInSecs = 60 * 60 * 24 * 30;
+  const fifteenMinsInSecs = 15;
+  // Can change database stuff here if need to later
+  res.clearCookie('access_token', {
+    path: '/',
+    maxAge: fifteenMinsInSecs,
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production' ? true : false,
   });
+
+  res.clearCookie('refresh_token', {
+    path: '/',
+    maxAge: oneMonthInSecs,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production' ? true : false,
+  });
+  // Return OK status
   res.sendStatus(200);
 });
 

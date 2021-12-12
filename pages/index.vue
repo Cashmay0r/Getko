@@ -3,7 +3,7 @@
     <div class="flex justify-center items-center">
       <img src="/img/gecko.png" class="object-contain w-1/2 lg:w-full" />
     </div>
-    <div class="flex items-center w-10/12 lg:w-1/4" v-if="!this.$auth.user">
+    <div class="flex items-center w-10/12 lg:w-1/4">
       <Login-form v-show="loginForm" @registerForm="changeToRegister"></Login-form>
       <Register-form v-show="registerForm" @loginForm="changeToLogin"></Register-form>
     </div>
