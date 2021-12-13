@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-grow flex-col-reverse lg:flex-row justify-evenly items-center">
+  <div class="flex flex-grow flex-col-reverse md:flex-row justify-evenly items-center">
     <div class="flex justify-center items-center">
       <img src="/img/gecko.png" class="object-contain w-1/2 lg:w-full" />
     </div>

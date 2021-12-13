@@ -14,7 +14,7 @@
           <a class="hover:no-underline text-sm underline cursor-pointer text-primary-green">Forgot password?</a>
         </div>
         <div class="flex flex-row justify-center items-center">
-          <button type="submit" class="w-56 px-3 py-1 max-w-xs h-8 rounded-xl transition duration-250 ease-in-out bg-primary-green hover:bg-gecko-green transform hover:scale-105 border-black border-opacity-20">Login</button>
+          <button type="submit" class="w-56 px-3 py-1 max-w-xs h-8 rounded-xl transition duration-250 ease-in-out bg-primary-green hover:bg-gecko-green transform hover:scale-105 border-black border-opacity-20 shadow-lg">Login</button>
         </div>
       </form>
       <p class="text-sm">

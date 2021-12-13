@@ -19,7 +19,7 @@
           <input placeholder="Password..." class="w-72 mb-5 rounded-md border border-gray-500 border-opacity-75 px-3 py-1" required v-model="passwordVal2" type="password" />
         </div>
         <div class="flex flex-row justify-center items-center">
-          <button type="submit" class="w-56 px-3 py-1 max-w-xs h-8 rounded-xl transition duration-250 ease-in-out bg-primary-green hover:bg-gecko-green transform hover:scale-105 border-black border-opacity-20">Create Account</button>
+          <button type="submit" class="w-56 px-3 py-1 max-w-xs h-8 rounded-xl transition duration-250 ease-in-out bg-primary-green hover:bg-gecko-green transform hover:scale-105 border-black border-opacity-20 shadow-lg">Create Account</button>
         </div>
       </form>
       <p class="text-sm">
