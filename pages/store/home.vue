@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-col justify-start items-center w-full h-full md:flex-row md:justify-start md:items-start md:gap-10 md:w-4/6 md:h-5/6">
+  <div class="flex flex-col justify-start items-center w-full h-full md:flex-row md:justify-center md:items-center md:w-full md:h-5/6 md:flex-wrap md:overflow-auto md:gap-10 px-10">
     <div v-for="product in products" :key="product.product">
-      <div class="h-96 w-72 max-h-fit max-w-fit m-10">
-        <ProductCard :creator="product.creator" :image="product.image" :price="product.price" :product="product.product"></ProductCard>
+      <div class="h-96 w-72 max-h-fit max-w-fit">
+        <ProductCard :creator="product.product_creator" :image="product.product_image" :price="product.product_price" :product="product.product_name"></ProductCard>
       </div>
     </div>
   </div>
@@ -14,21 +14,24 @@
     components: {ProductCard},
     data() {
       return {
-        products: [
-          {
-            product: 'Red Nike',
-            creator: 'Almighty Nike',
-            price: 50,
-            image: '/img/red_nike.jpg',
-          },
-          {
-            product: 'Green Shoe',
-            creator: 'Green Man',
-            price: 75,
-            image: '/img/green_shoe.jpg',
-          },
-        ],
+        products: [],
       };
+    },
+    created() {
+      this.getProducts();
+    },
+    methods: {
+      async getProducts() {
+        await this.$axios
+          .get('api/latest_products')
+          .then((response) => {
+            this.products = response.data;
+            console.log(response);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
     },
   };
 </script>

@@ -12,7 +12,7 @@
         <a class="mx-2 hover:text-hover-green cursor-pointer" @click="logout">Logout</a>
       </div>
       <div class="flex flex-row justify-center items-center" v-else>
-        <button @click="testAPI">Test API</button>
+        <button @click="testAPI" class="mx-2 hover:text-hover-green cursor-pointer">Test API</button>
         <nuxt-link to="/" class="mx-2 hover:text-hover-green cursor-pointer">Login</nuxt-link>
         <nuxt-link to="/" class="mx-2 hover:text-hover-green cursor-pointer">Register</nuxt-link>
       </div>
@@ -35,14 +35,7 @@
         //console.log(logout);
       },
       async testAPI() {
-        if (this.accessToken != null) {
-          const config = {
-            headers: {Authorization: `Bearer ${this.accessToken}`},
-          };
-          const response = await this.$axios.get('/api/testroute', config);
-        } else {
-          alert('Must be logged in to access this feature');
-        }
+        const test = await this.$axios.get('api/latest_products');
       },
     },
   };

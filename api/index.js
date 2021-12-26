@@ -24,30 +24,11 @@ app.use(
   })
 );
 
-app.post('/new_product', async (req, res) => {
-  console.log('In new product func');
-  const {product_name, product_price, product_creator, product_image} = req.body;
-
-  const product_id = uuidv4();
-  try {
-    const newProduct = await product.create({
-      product_id,
-      product_name,
-      product_price,
-      product_creator,
-      product_image,
-    });
-    res.send('Successfully created new product', 200);
-  } catch {
-    res.send('Could not create a new product', 400);
-  }
-});
 app.post('/user', async (req, res) => {
   let authHeader = null;
   const token = req.body.headers.Authorization;
   if (token) {
     //const token = authHeader.split(' ')[1];
-
     jwt.verify(token, process.env.TOKEN_KEY, (err, user) => {
       if (err) {
         return res.sendStatus(403);
@@ -154,11 +135,13 @@ app.post('/login', async (req, res) => {
       maxAge: fifteenMinsInSecs,
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production' ? true : false,
+      path: '/',
     });
     res.cookie('refresh_token', refreshToken, {
       maxAge: oneMonthInSecs,
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production' ? true : false,
+      path: '/',
     });
     res.send(data);
   } else {
@@ -231,12 +214,14 @@ app.post('/register', async (req, res) => {
       maxAge: fifteenMinsInSecs,
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production' ? true : false,
+      path: '/',
     });
 
     res.cookie('refresh_token', refreshToken, {
       maxAge: oneMonthInSecs,
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production' ? true : false,
+      path: '/',
     });
     res.send(data);
   } catch (err) {
@@ -267,7 +252,43 @@ app.post('/logout', (req, res) => {
 });
 
 // Checks if current JWT is valid
-//app.use(authenticateJWT);
+app.use(authenticateJWT);
+
+app.get('/latest_products', async (req, res) => {
+  try {
+    const latestProds = await product.find().limit(10);
+
+    if (latestProds) {
+      res.status(200).send(latestProds);
+    } else {
+      res.status(400).send('No products found');
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).send('No products found');
+  }
+});
+
+app.post('/newProduct', async (req, res) => {
+  console.log('Adding new product');
+  const {product_name, product_price, product_creator, product_image, product_description} = req.body;
+
+  const product_id = uuidv4();
+  try {
+    const newProduct = await product.create({
+      product_id,
+      product_name,
+      product_price,
+      product_creator,
+      product_image,
+      product_description,
+    });
+    res.status(200).send('Successfully created new product');
+  } catch (error) {
+    console.log(error);
+    res.status(400).send('Could not create a new product');
+  }
+});
 
 app.get('/testroute', (req, res) => {
   console.log('Test route');

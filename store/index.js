@@ -26,9 +26,10 @@ export const actions = {
           console.log('Get new access_token');
           // Set new access_token cookie
           this.$cookies.set('access_token', access_token, {
-            maxAge: 60 * 15,
+            maxAge: 60 * 15 * 1000,
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production' ? true : false,
+            path: '/',
           });
           // Find user and set their state
           const user = await this.$axios.post(baseUrl + '/api/user', {

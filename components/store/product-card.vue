@@ -1,7 +1,7 @@
 <template>
   <div class="h-full w-full rounded-lg p-2 shadow-2xl my-5">
-    <div class="rounded-lg h-72">
-      <div class="absolute w-10 h-10 m-3 rounded-full flex justify-center items-center bg-white cursor-pointer">
+    <div class="rounded-lg h-72 relative">
+      <div class="absolute w-10 h-10 m-3 rounded-full flex justify-center items-center shadow-xl bg-white cursor-pointer">
         <span class="material-icons text-red-600"> favorite_border </span>
       </div>
       <img :src="image" class="object-cover lg:w-full w-full h-full rounded-lg cursor-pointer" />

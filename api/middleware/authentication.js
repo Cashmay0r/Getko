@@ -1,13 +1,14 @@
-import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
+import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 dotenv.config();
 
 export const authenticateJWT = function (req, res, next) {
-  console.log("Auth middleware");
-  const authHeader = req.headers.authorization;
-
+  console.log('Auth middleware');
+  const authHeader = req.cookies.access_token;
+  console.log(authHeader);
   if (authHeader) {
-    const token = authHeader.split(" ")[1];
+    const token = authHeader;
+    //const token = authHeader.split(' ')[1];
 
     jwt.verify(token, process.env.TOKEN_KEY, (err, user) => {
       if (err) {

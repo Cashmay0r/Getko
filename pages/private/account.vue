@@ -17,11 +17,23 @@
       return {
         name: 'Test Name',
         email: 'test@gmail.com',
+        newProduct: {
+          product_name: 'Scarpa Boots',
+          product_description: 'Very warm and comfortable hiking boots.',
+          product_price: 250,
+          product_creator: 'Melanie M',
+          product_image: 'https://cdn.runrepeat.com/i/scarpa/26343/scarpa-womens-women-s-terra-gtx-hiking-boot-brown-36-eu-5-5-m-us-women-s-brown-1a0a-main.jpg',
+        },
       };
     },
+    computed: {},
     methods: {
       async getAccountData() {
         // Axios request to fetch user data.
+      },
+      async addProduct() {
+        const addProduct = await this.$axios.post('/api/newProduct', this.newProduct);
+        console.log(addProduct);
       },
     },
   };
