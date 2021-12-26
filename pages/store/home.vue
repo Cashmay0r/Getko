@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col justify-start items-center w-full h-full md:flex-row md:justify-start md:items-start border border-black border-solid md:gap-10 md:w-4/6 md:h-5/6">
+  <div class="flex flex-col justify-start items-center w-full h-full md:flex-row md:justify-start md:items-start md:gap-10 md:w-4/6 md:h-5/6">
     <div v-for="product in products" :key="product.product">
       <div class="h-96 w-72 max-h-fit max-w-fit m-10">
         <ProductCard :creator="product.creator" :image="product.image" :price="product.price" :product="product.product"></ProductCard>
@@ -9,6 +9,7 @@
 </template>
 <script>
   import ProductCard from '~/components/store/product-card.vue';
+
   export default {
     components: {ProductCard},
     data() {

@@ -7,6 +7,8 @@ import jwtDecode from 'jwt-decode';
 import bcrypt from 'bcryptjs';
 import {authenticateJWT} from './middleware/authentication';
 import cookieParser from 'cookie-parser';
+import product from './models/product';
+import {v4 as uuidv4} from 'uuid';
 
 dotenv.config();
 
@@ -21,6 +23,25 @@ app.use(
     extended: false,
   })
 );
+
+app.post('/new_product', async (req, res) => {
+  console.log('In new product func');
+  const {product_name, product_price, product_creator, product_image} = req.body;
+
+  const product_id = uuidv4();
+  try {
+    const newProduct = await product.create({
+      product_id,
+      product_name,
+      product_price,
+      product_creator,
+      product_image,
+    });
+    res.send('Successfully created new product', 200);
+  } catch {
+    res.send('Could not create a new product', 400);
+  }
+});
 app.post('/user', async (req, res) => {
   let authHeader = null;
   const token = req.body.headers.Authorization;

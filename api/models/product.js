@@ -1,11 +1,6 @@
 import {model, Schema, models} from 'mongoose';
 
 let productSchema = new Schema({
-  first_name: {
-    type: String,
-    default: null,
-    required: true,
-  },
   product_name: {
     type: String,
     default: null,
@@ -22,6 +17,16 @@ let productSchema = new Schema({
     required: true,
   },
   product_image: {
+    type: String,
+    default: null,
+    required: true,
+  },
+  product_id: {
+    type: String,
+    default: null,
+    required: true,
+  },
+  product_description: {
     type: String,
     default: null,
     required: true,

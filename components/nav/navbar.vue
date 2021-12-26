@@ -8,6 +8,7 @@
       <div>Wishlist</div>
       <div @click="routePage('/private/account')" class="cursor-pointer" v-if="loggedIn">Account</div>
       <div v-if="loggedIn" @click="logout" class="cursor-pointer">Logout</div>
+      <div @click="testAPI">Test API</div>
     </div>
 
     <div class="flex flex-row justify-center items-center gap-4 mr-5">
@@ -30,6 +31,7 @@
 </template>
 
 <script>
+  import {v4 as uuidv4} from 'uuid';
   export default {
     data() {
       return {
@@ -46,6 +48,17 @@
         console.log('Logging out...');
 
         //console.log(logout);
+      },
+      async testAPI() {
+        const data = {
+          product_id: uuidv4(),
+          product_name: 'Hisense',
+          product_price: 50,
+          product_creator: 'China',
+          product_image: 'https://hisense.com.au/wp-content/uploads/2021/05/HIS9704_Hisense_55and65U8G_Product_Image_F-1.jpg',
+        };
+        const test = await this.$axios.post('/api/new_product', data);
+        console.log(test);
       },
     },
 
